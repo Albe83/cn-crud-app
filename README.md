@@ -12,6 +12,21 @@ The system provides a scalable infrastructure for managing generic resources usi
 ## Structure
 The project is organized into multiple services (or bounded contexts) that represent separate domains. Each service exposes RESTful APIs for data management and can be launched in Docker containers. The architecture can be extended by adding new contexts in a modular way.
 
+## Architecture Overview
+The core components of the system are:
+
+- **Commander**: Acts as the REST entry point for create, update and delete requests.
+  It allows clients to manage resources through standard HTTP calls.
+- **ResourceID**: A technical microservice that encapsulates the logic for generating
+  unique identifiers for resources.
+- **ResourceManager**: Implemented as a DAPR Actor, it contains the business logic
+  for creating, modifying and deleting resources.
+ - **ResourceProjector**: Translates events produced by the ResourceManager into
+  materialized views so that they can be queried with more complex filters.
+
+The `workspace.dsl` file at the root of the repository contains a Structurizr
+representation of this architecture.
+
 ## Prerequisites
 Make sure you have installed:
 - [Docker](https://www.docker.com/) to run the services

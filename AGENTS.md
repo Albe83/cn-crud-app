@@ -5,6 +5,7 @@ This document defines the main guidelines for contributing to this repository.
 ## Repository structure
 - Analyze the project structure before modifying files.
 - Check the README and any other documentation for specific instructions.
+- Store all project documentation inside the `docs` directory.
 
 ## Contributions
 - Write commit messages in English, clearly and concisely.

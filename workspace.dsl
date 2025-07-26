@@ -3,7 +3,7 @@ workspace {
         user = person "User" "Interacts with the system via REST APIs"
         system = softwareSystem "cn-crud-app" "CRUD microservice sample"
         commander = container system "Commander" "REST entry point for create, update and delete requests"
-        resourceId = container system "ResourceID" "Generates unique identifiers for resources"
+        resourceId = container system "ResourceID" "Generates certified buckets of unique identifiers for resources"
         resourceManager = container system "ResourceManager" "DAPR Actor implementing business logic for resources"
         resourceProjector = container system "ResourceProjector" "Creates materialized views from events"
 
@@ -17,6 +17,13 @@ workspace {
         container system "SystemContext" {
             include *
             autolayout lr
+        }
+
+        dynamic system "Commander requests unique IDs" {
+            user -> commander "Requests creation"
+            commander -> resourceId "Asks for ID bucket"
+            resourceId -> commander "Returns ID bucket"
+            commander -> resourceManager "Creates resource"
         }
     }
 }

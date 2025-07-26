@@ -19,7 +19,6 @@ workspace {
             include *
             autolayout lr
         }
-
         dynamic system "Commander requests unique IDs" {
             user -> commander "Requests creation"
             commander -> resourceId "Asks for ID bucket"

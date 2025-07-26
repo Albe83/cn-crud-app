@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant Client
+    participant Envoy as Envoy Proxy
+    participant App as Main Application
+    participant RM as Resource Manager
+
+    Client->>Envoy: HTTP request
+    Envoy->>Envoy: OIDC authentication
+    Envoy->>App: Forward request
+    App->>RM: Invoke resource action
+    RM-->>App: Result
+    App-->>Client: Response

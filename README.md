@@ -24,8 +24,7 @@ The core components of the system are:
  - **ResourceProjector**: Translates events produced by the ResourceManager into
   materialized views so that they can be queried with more complex filters.
 
-The `workspace.dsl` file at the root of the repository contains a Structurizr
-representation of this architecture.
+The `docs/dsl/workspace.dsl` file contains a Structurizr representation of this architecture.
 
 ## Prerequisites
 Make sure you have installed:

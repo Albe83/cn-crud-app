@@ -1,4 +1,5 @@
 workspace {
+    !include docs/dsl/commander.dsl
     model {
         user = person "User" "Interacts with the system via REST APIs"
         system = softwareSystem "cn-crud-app" "CRUD microservice sample"

@@ -6,6 +6,8 @@ This document defines the main guidelines for contributing to this repository.
 - Analyze the project structure before modifying files.
 - Check the README and any other documentation for specific instructions.
 - Store all project documentation inside the `docs` directory.
+- Document architecture using diagram-as-code approaches (DSL, PlantUML, Mermaid, Markdown) so that diagrams can render in GitHub.
+- Keep all architectural artifacts consistent whenever they are created or updated.
 
 ## Contributions
 - Write commit messages in English, clearly and concisely.

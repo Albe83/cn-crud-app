@@ -8,6 +8,13 @@ This document defines the main guidelines for contributing to this repository.
 - Store all project documentation inside the `docs` directory.
 - Document architecture using diagram-as-code approaches (DSL, PlantUML, Mermaid, Markdown) so that diagrams can render in GitHub.
 - Keep all architectural artifacts consistent whenever they are created or updated.
+- Ensure that documentation artifacts (e.g., PlantUML and Mermaid files) are syntactically valid.
+  You can lint them with the following commands:
+
+  ```bash
+  docker run --rm -v $(pwd)/docs:/docs plantuml/plantuml -check docs/puml/*.puml
+  docker run --rm -v $(pwd)/docs:/docs ghcr.io/mermaid-js/mermaid-cli mmdc -i docs/commander_sequence.mmd -o /tmp/diagram.svg
+  ```
 
 ## Contributions
 - Write commit messages in English, clearly and concisely.

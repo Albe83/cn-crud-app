@@ -1,10 +1,10 @@
 sequenceDiagram
     participant Client
-    participant Envoy as Envoy Proxy
-    participant Commander as Main Application
-    participant Daprd as Dapr Sidecar
-    participant Actor as Resource Actor
-    participant Cerbos as Cerbos PDP
+    participant Envoy as "Envoy Proxy"
+    participant Commander as "Main Application"
+    participant Daprd as "Dapr Sidecar"
+    participant Actor as "Resource Actor"
+    participant Cerbos as "Cerbos PDP"
 
     Client->>Envoy: POST /resources + JWT
     Envoy->>Envoy: Validate JWT

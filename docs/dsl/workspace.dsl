@@ -7,6 +7,7 @@ workspace {
         resourceId = container system "ResourceID" "Generates certified buckets of unique identifiers for resources"
         resourceManager = container system "ResourceManager" "DAPR Actor implementing business logic for resources"
         resourceProjector = container system "ResourceProjector" "Creates materialized views from events"
+        cerbos = container system "Cerbos" "Policy Decision Point"
 
         user -> commander "Manages resources"
         commander -> resourceId "Requests IDs"
@@ -24,6 +25,15 @@ workspace {
             commander -> resourceId "Asks for ID bucket"
             resourceId -> commander "Returns ID bucket"
             commander -> resourceManager "Creates resource"
+        }
+        dynamic system "Create Resource" {
+            user -> envoyProxy "Sends create request"
+            envoyProxy -> mainApplication "Forwards authenticated request"
+            mainApplication -> resourceManager "Invokes createResource"
+            resourceManager -> cerbos "Authorization query"
+            cerbos -> resourceManager "Decision"
+            resourceManager -> resourceManager "Persist state"
+            resourceManager -> resourceProjector "Publish event"
         }
     }
 }

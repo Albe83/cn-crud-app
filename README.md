@@ -24,7 +24,7 @@ The core components of the system are:
  - **ResourceProjector**: Translates events produced by the ResourceManager into
   materialized views so that they can be queried with more complex filters.
 
-The `docs/dsl/workspace.dsl` file contains a Structurizr representation of this architecture. A PlantUML version of the same C4 model is available at `docs/puml/workspace.puml`. You can view the rendered diagrams in [docs/architecture.md](docs/architecture.md).
+Architecture diagrams are available in [docs/architecture.md](docs/architecture.md).
 
 ## Prerequisites
 Make sure you have installed:

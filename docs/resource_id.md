@@ -5,7 +5,7 @@ This document explains how the **Resource ID** service produces unique identifie
 ## Overview
 The service builds a 64-bit identifier from the current timestamp, a datacenter identifier, a worker identifier and a random sequence number.
 
-The flowchart in [resourceid_flowchart.mmd](resourceid_flowchart.mmd) shows the main steps involved in the process.
+The flowchart in [resource_id_flowchart.mmd](resource_id_flowchart.mmd) shows the main steps involved in the process.
 
 ## Steps
 1. **Client request** – A client or internal service calls the Resource ID endpoint.

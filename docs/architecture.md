@@ -1,6 +1,6 @@
 # Architecture Diagrams
 
-The following diagrams describe the cn-crud-app using the C4 model. They are generated from [docs/puml/workspace.puml](puml/workspace.puml).
+The following diagrams describe the cn-crud-app using the C4 model.
 
 ## System Context
 

@@ -5,7 +5,7 @@ This document explains how the system processes a request to delete an existing 
 ## Overview
 The flow is similar to the creation scenario but triggers the `deleteResource` method on the resource actor. Authorization and state management are handled before the resource is marked for removal and scheduled for cleanup.
 
-A graphical representation of the sequence is available in [delete_sequence.mmd](delete_sequence.mmd). The diagram groups containers into pods and numbers each step for clarity.
+A graphical representation of the sequence is available in [commander_delete_sequence.mmd](commander_delete_sequence.mmd). The diagram groups containers into pods and numbers each step for clarity.
 
 ## Steps
 1. **Client request** – The client sends an HTTP `DELETE` request to the Commander endpoint with the resource identifier and a valid JWT.

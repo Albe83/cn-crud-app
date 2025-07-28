@@ -1,17 +1,7 @@
 flowchart TD
     A[Client request] --> B[Capture timestamp]
-    B --> C{Time < last timestamp?}
-    C -- Yes --> D[Wait next millisecond]
-    D --> E[Update timestamp]
-    C -- No --> E
-    E --> F[Read datacenter ID]
-    F --> G[Read worker ID]
-    G --> H{Timestamp == last timestamp?}
-    H -- Yes --> I[Increment sequence]
-    H -- No --> J[Reset sequence]
-    I --> K{Sequence overflow?}
-    K -- Yes --> D
-    K -- No --> L[Use sequence]
-    J --> L
-    L --> M[Compose Snowflake ID]
-    M --> N[Return unique ID]
+    B --> C[Read datacenter ID]
+    C --> D[Read worker ID]
+    D --> E[Generate random sequence]
+    E --> F[Compose Snowflake ID]
+    F --> G[Return unique ID]

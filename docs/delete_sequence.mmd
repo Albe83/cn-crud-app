@@ -32,7 +32,10 @@ sequenceDiagram
         else
             Cerbos-->>ResourceActor: Allowed
             ResourceActor->>ResourceActor: Set metadata.deleted
-            ResourceActor->>ResourceActor: Schedule cleanup reminder
+            ResourceActor->>+ActorDaprd: Save state
+            ActorDaprd-->>ResourceActor: State saved
+            ResourceActor->>+ActorDaprd: Register cleanup reminder
+            ActorDaprd-->>ResourceActor: Reminder scheduled
             ResourceActor-->>ActorDaprd: 204 No Content
         end
         deactivate Cerbos
@@ -46,3 +49,15 @@ sequenceDiagram
     deactivate Commander
     EnvoyProxy-->>Client: HTTP result
     deactivate EnvoyProxy
+
+    note over ActorDaprd: Cleanup reminder triggered later
+    ActorDaprd->>+ResourceActor: onDeleteReminder()
+    ResourceActor->>ResourceActor: Load state
+    ResourceActor->>ResourceActor: Verify deleted timestamp
+    alt Ready for cleanup
+        ResourceActor->>+ActorDaprd: Delete state
+        ActorDaprd-->>ResourceActor: State removed
+    end
+    ResourceActor-->>ActorDaprd: Done
+    deactivate ResourceActor
+    deactivate ActorDaprd

@@ -21,23 +21,28 @@ sequenceDiagram
     note over ResourceActor: 3. Load current state
     ResourceActor->>ResourceActor: Load state
     alt Resource already created
-        ResourceActor-->>-Commander: 409 Conflict
+        ResourceActor-->>Commander: 409 Conflict
     else
         ResourceActor->>ResourceActor: Merge defaults + request
         ResourceActor->>ResourceActor: Validate schema
         alt Invalid schema
-            ResourceActor-->>-Commander: 422 Unprocessable Entity
+            ResourceActor-->>Commander: 422 Unprocessable Entity
         else
             ResourceActor->>+Cerbos: Authorization request
             alt Forbidden
                 Cerbos-->>ResourceActor: Denied
-                ResourceActor-->>-Commander: 403 Forbidden
+                ResourceActor-->>Commander: 403 Forbidden
             else
                 Cerbos-->>ResourceActor: Allowed
                 ResourceActor->>ResourceActor: Save state
-                ResourceActor-->>-Commander: 201 Created
+                ResourceActor-->>Commander: 201 Created
             end
         end
     end
-    Commander-->>-EnvoyProxy: Response
-    EnvoyProxy-->>-Client: HTTP result
+    deactivate ResourceActor
+    DaprSidecar-->>Commander: Propagate result
+    deactivate DaprSidecar
+    Commander-->>EnvoyProxy: Response
+    deactivate Commander
+    EnvoyProxy-->>Client: HTTP result
+    deactivate EnvoyProxy

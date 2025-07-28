@@ -1,0 +1,16 @@
+%%{init: {'theme': 'default'}}%%
+C4Container
+title Commander System
+Person(client, "Client", "Uses the public API")
+System_Boundary(commanderSys, "Commander System") {
+  Container(envoy, "Envoy Proxy", "Gateway", "Authenticates JWTs")
+  Container(commander, "Commander Service", "Service", "REST entry point")
+  Container(daprd, "Dapr Sidecar", "Sidecar", "Service invocation")
+}
+System_Ext(resourceId, "Resource ID System", "Generates unique IDs")
+System_Ext(actorSys, "Resource Actor System", "Handles resource life-cycle")
+Rel(client, envoy, "HTTP")
+Rel(envoy, commander, "Forwarded requests")
+Rel(commander, daprd, "Invoke actor")
+Rel(commander, resourceId, "Request ID")
+Rel(daprd, actorSys, "Invoke actor methods")

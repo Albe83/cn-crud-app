@@ -1,0 +1,10 @@
+%%{init: {'theme': 'default'}}%%
+C4Container
+title Resource ID System
+System_Boundary(resourceIdSys, "Resource ID System") {
+  Container(service, "ResourceID Service", "Service", "Snowflake ID generator")
+  Container(config, "Configuration", "Settings", "Datacenter and worker IDs")
+}
+System_Ext(commanderSys, "Commander System", "Requests IDs")
+Rel(commanderSys, service, "HTTP")
+Rel(service, config, "Reads")

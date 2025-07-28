@@ -1,0 +1,16 @@
+%%{init: {'theme': 'default'}}%%
+C4Container
+title Resource Actor System
+System_Boundary(actorSys, "Resource Actor System") {
+  Container(actor, "ResourceManager", "Dapr Actor", "Resource logic")
+  Container(actorDaprd, "Dapr Sidecar", "Sidecar", "Actor runtime")
+  ContainerDb(stateStore, "State Store", "Database", "Actor state")
+  Container(queue, "Event Broker", "Pub/Sub", "Domain events")
+}
+Container_Ext(cerbos, "Cerbos PDP", "Authorization", "Policy decisions")
+System_Ext(commanderSys, "Commander System", "Invokes actor")
+Rel(commanderSys, actorDaprd, "Invoke methods")
+Rel(actorDaprd, actor, "Invoke actor")
+Rel(actor, stateStore, "Persist state")
+Rel(actor, queue, "Publish events")
+Rel(actor, cerbos, "AuthZ query")

@@ -10,3 +10,7 @@ This directory contains documentation and diagrams for the sample CRUD applicati
 - [JWT, JWS and OIDC](topics/jwt_oidc.md)
 
 Additional architecture diagrams are provided in the `dsl` and `puml` folders.
+
+## Workflows
+- [Resource Creation](resource_creation.md)
+- [Resource Update](resource_update.md)

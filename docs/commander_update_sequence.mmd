@@ -1,0 +1,53 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    box Commander #DDEEFF
+        participant EnvoyProxy as Envoy Proxy
+        participant Commander as Main Application
+        participant CommanderDaprd as Daprd
+    end
+    box Resource Actor Pod #FFEEDD
+        participant ActorDaprd as Daprd
+        participant ResourceActor as Resource Actor
+        participant Cerbos as Cerbos PDP
+    end
+
+    Client->>+EnvoyProxy: PUT /resources/:id + JWT
+    note over Client,EnvoyProxy: 1. Client request authenticated by Envoy
+    EnvoyProxy->>EnvoyProxy: Validate JWS
+    EnvoyProxy->>+Commander: Forward request
+    note over Commander: 2. Application resolves actor ID
+    Commander->>+CommanderDaprd: invoke updateResource(actorID)
+    CommanderDaprd->>+ActorDaprd: service invocation
+    ActorDaprd->>+ResourceActor: updateResource()
+    note over ResourceActor: 3. Load current state
+    ResourceActor->>ResourceActor: Load state
+    alt Resource not initialized
+        ResourceActor-->>ActorDaprd: 404 Not Found
+    else
+        ResourceActor->>ResourceActor: Merge state + request
+        ResourceActor->>ResourceActor: Validate schema
+        alt Invalid schema
+            ResourceActor-->>ActorDaprd: 422 Unprocessable Entity
+        else
+            ResourceActor->>+Cerbos: Authorization request
+            alt Forbidden
+                Cerbos-->>ResourceActor: Denied
+                ResourceActor-->>ActorDaprd: 403 Forbidden
+            else
+                Cerbos-->>ResourceActor: Allowed
+                ResourceActor->>ResourceActor: Save state
+                ResourceActor-->>ActorDaprd: 200 OK
+            end
+            deactivate Cerbos
+        end
+    end
+    deactivate ResourceActor
+    ActorDaprd-->>CommanderDaprd: Propagate result
+    deactivate ActorDaprd
+    CommanderDaprd-->>Commander: Propagate result
+    deactivate CommanderDaprd
+    Commander-->>EnvoyProxy: Response
+    deactivate Commander
+    EnvoyProxy-->>Client: HTTP result
+    deactivate EnvoyProxy

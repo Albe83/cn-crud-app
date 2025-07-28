@@ -5,7 +5,7 @@ This document describes the detailed workflow executed when a client issues a re
 ## Overview
 The process starts with an authenticated REST request. The request travels through the Envoy proxy, reaches the Commander application and eventually triggers an actor running in Dapr. The actor performs the validation and authorization steps and persists the resource state if all checks pass.
 
-A graphical representation of the sequence is available in [commander_sequence.mmd](commander_sequence.mmd). The diagram groups containers into pods and numbers each step for clarity.
+A graphical representation of the sequence is available in [commander_create_sequence.mmd](commander_create_sequence.mmd). The diagram groups containers into pods and numbers each step for clarity.
 
 ## Steps
 1. **Client request** – The client sends an HTTP request to the Commander endpoint. The request carries a JWT issued by the Identity Provider.

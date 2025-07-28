@@ -4,10 +4,10 @@ sequenceDiagram
     box "Commander Pod" #DDEEFF
         participant EnvoyProxy as "Envoy Proxy"
         participant Commander as "Main Application"
-        participant CommanderDaprd as "daprd (Commander)"
+        participant CommanderDaprd as "Daprd"
     end
     box "Resource Actor Pod" #FFEEDD
-        participant ActorDaprd as "daprd (Actor)"
+        participant ActorDaprd as "Daprd"
         participant ResourceActor as "Resource Actor"
         participant Cerbos as "Cerbos PDP"
     end

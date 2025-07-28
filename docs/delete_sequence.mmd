@@ -1,0 +1,47 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    box Commander #DDEEFF
+        participant EnvoyProxy as Envoy Proxy
+        participant Commander as Main Application
+        participant CommanderDaprd as Daprd
+    end
+    box Resource Actor Pod #FFEEDD
+        participant ActorDaprd as Daprd
+        participant ResourceActor as Resource Actor
+        participant Cerbos as Cerbos PDP
+    end
+
+    Client->>+EnvoyProxy: DELETE /resources/{id} + JWT
+    note over Client,EnvoyProxy: 1. Client request authenticated by Envoy
+    EnvoyProxy->>EnvoyProxy: Validate JWT
+    EnvoyProxy->>+Commander: Forward request
+    note over Commander: 2. Application resolves actor ID and type
+    Commander->>+CommanderDaprd: invoke deleteResource(actorID, actorType)
+    CommanderDaprd->>+ActorDaprd: service invocation
+    ActorDaprd->>+ResourceActor: deleteResource()
+    note over ResourceActor: 3. Load current state
+    ResourceActor->>ResourceActor: Load state
+    alt Resource not found
+        ResourceActor-->>ActorDaprd: 404 Not Found
+    else
+        ResourceActor->>+Cerbos: Authorization request
+        alt Forbidden
+            Cerbos-->>ResourceActor: Denied
+            ResourceActor-->>ActorDaprd: 403 Forbidden
+        else
+            Cerbos-->>ResourceActor: Allowed
+            ResourceActor->>ResourceActor: Remove state
+            ResourceActor-->>ActorDaprd: 204 No Content
+        end
+        deactivate Cerbos
+    end
+    deactivate ResourceActor
+    ActorDaprd-->>CommanderDaprd: Propagate result
+    deactivate ActorDaprd
+    CommanderDaprd-->>Commander: Propagate result
+    deactivate CommanderDaprd
+    Commander-->>EnvoyProxy: Response
+    deactivate Commander
+    EnvoyProxy-->>Client: HTTP result
+    deactivate EnvoyProxy

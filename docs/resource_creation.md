@@ -20,3 +20,4 @@ A graphical representation of the sequence is available in [commander_sequence.m
 10. **Domain event** – After saving the state the actor emits a domain event notifying other services of the new resource creation.
 11. **Response** – The actor responds with `201 Created` and the generated resource ID. Commander relays this response back to the client.
 
+For the deletion process see [resource_deletion.md](resource_deletion.md).

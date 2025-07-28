@@ -30,10 +30,10 @@ sequenceDiagram
         else
             ResourceActor->>+Cerbos: Authorization request
             alt Forbidden
-                Cerbos-->>-ResourceActor: Denied
+                Cerbos-->>ResourceActor: Denied
                 ResourceActor-->>-Commander: 403 Forbidden
             else
-                Cerbos-->>-ResourceActor: Allowed
+                Cerbos-->>ResourceActor: Allowed
                 ResourceActor->>ResourceActor: Save state
                 ResourceActor-->>-Commander: 201 Created
             end

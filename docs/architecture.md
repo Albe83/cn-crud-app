@@ -6,6 +6,25 @@ The following diagrams describe the cn-crud-app using the C4 model.
 
 ![System Context](https://www.plantuml.com/plantuml/svg/ZP9FZzem4CNl-HHJJY0jvD9JJqi1RP5ssoXqrICozW1k7JkTiQ6qwdVlE6osq7zg3l5ayl9xR-pSSbGKK-DWTUA8pIpuY5zYyS9wxPB1H0xsCRRygYn97ISx6_TfanX9PwMF4nsQidNAPyYOet5sKyvUZglSUdouBnibN9BM-eazQKLP51KI1p_Cg1iOFCeoa7Kf4b8wCXp52U8UWRjWSB0AwiNgFKoh9Gz6nJdl-dL8tYWw3RNNb8mWj1_dQgpQTZ22RmN8bQsLzKX3YTieRphJMLzdvuuj0z49sc1zX6qWq8GguWsariWA8WQ33gKa_9oGOqvoRK388P76PSvIzm_pR7678X0EWqQATclHm2RfJoZZXYqaRuK9raYA_9Auoz03_sxreBpQTHFLrvriEfzMDKnr599jMeTDflkT6BD0cC65dTN_wLHH-8YPTU7rtCjkisx361gvarNEVfKP3nQFCWk51l0Wzfd_lIXgT4_7Vtaev-Xy5IOhBpI_RF7v860v_uVqvnQjq1lk7VilVfFzQU0gRPpblMHxdg9OlNdtONs_k5kydGz7nQsmvUV-0G==)
 
+## Software Systems Overview
+
+```mermaid
+%%{init: {'theme': 'default'}}%%
+C4Context
+title Software Systems Overview
+Person(client, "Client", "Uses the public API")
+Person(idp, "Identity Provider", "OIDC provider")
+System(commander, "Commander System", "Entry point service")
+System(actor, "Resource Actor System", "Handles resource life-cycle")
+System(resourceId, "Resource ID System", "Generates unique IDs")
+System_Ext(cerbos, "Cerbos PDP", "Authorization")
+Rel(client, commander, "HTTP via Envoy")
+Rel(client, idp, "Authenticate")
+Rel(commander, actor, "Invoke actors")
+Rel(commander, resourceId, "Request IDs")
+Rel(actor, cerbos, "AuthZ query")
+```
+
 ## Commander Requests Unique IDs
 
 ![Commander Requests Unique IDs](https://www.plantuml.com/plantuml/svg/RP31JiCm38RlVOgmKoUnziA9qr0xGQKDfgAAuvIctXQjTORj2F7sf6WThTWfYVtbzoSlMJI9xrgLkQxJs02LyEc1XIkquLBa7DrPDArlm5EhZY9dVanJqb_9mShHrvw1Z4C1bCIuBZst6ll41KlJsZhD7XRRlbHjrccdMO12QPT_e-wiISw1ZA8j43kC-wXxDQl2CPj7MGZL5e5YCxY5vjLpGX2mysIWQ09I3e_y9hFHg0-_MUMq4kYeXFQYCHuwx4GP0YtMOK1xSiHC39xun6hlI1MvghqvWLm-ZAdf0F64_8-_CU1FF-jbWA-Ttl_zvUrZjruzhrxpU1uj0Pkmu1y=)

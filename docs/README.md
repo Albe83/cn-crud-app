@@ -11,7 +11,7 @@ This directory contains documentation and diagrams for the sample CRUD applicati
 - [Resource Creation Workflow](resource_creation.md)
 - [Resource Deletion Workflow](resource_deletion.md)
 
-Additional architecture diagrams, including a container overview and per-system diagrams, are provided in [architecture.md](architecture.md).
+Additional architecture diagrams, including a container overview, a software systems overview, and per-system diagrams, are provided in [architecture.md](architecture.md).
 
 ## Workflows
 - [Resource Creation](resource_creation.md)

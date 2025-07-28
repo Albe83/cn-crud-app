@@ -11,7 +11,7 @@ A graphical representation of the sequence is available in [commander_sequence.m
 1. **Client request** – The client sends an HTTP request to the Commander endpoint. The request carries a JWT issued by the Identity Provider.
 2. **Authentication** – Envoy Proxy validates the integrity and authenticity of the JWT using OIDC configuration.
 3. **Forwarding** – After successful validation the proxy forwards the request to the main application container of Commander.
-4. **Actor invocation** – The main application calls Dapr's sidecar (`daprd`) to invoke `createResource` on the appropriate actor. The actor ID has been issued by the *ResourceID* service and the actor type matches the configured resource type.
+4. **Actor invocation** – The main application sends the request to its local Dapr sidecar (`daprd`). The sidecar forwards the call to the actor's sidecar, which then invokes `createResource` on the target actor. The actor ID has been issued by the *ResourceID* service and the actor type matches the configured resource type.
 5. **State check** – The actor retrieves its state and verifies the `metadata.created` attribute. If the attribute is already set the actor returns `409 Conflict`.
 6. **Temporary resource creation** – When the resource does not exist the actor merges default values with the payload from the request and assigns its own identifier to the new resource instance.
 7. **Schema validation** – The temporary resource is validated against the configured schema. If validation fails the actor returns `422 Unprocessable Entity`.

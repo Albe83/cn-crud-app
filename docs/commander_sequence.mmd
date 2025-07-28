@@ -4,9 +4,10 @@ sequenceDiagram
     box "Commander Pod" #DDEEFF
         participant EnvoyProxy as "Envoy Proxy"
         participant Commander as "Main Application"
-        participant DaprSidecar as "Dapr Sidecar"
+        participant CommanderDaprd as "daprd (Commander)"
     end
     box "Resource Actor Pod" #FFEEDD
+        participant ActorDaprd as "daprd (Actor)"
         participant ResourceActor as "Resource Actor"
         participant Cerbos as "Cerbos PDP"
     end
@@ -16,32 +17,35 @@ sequenceDiagram
     EnvoyProxy->>EnvoyProxy: Validate JWT
     EnvoyProxy->>+Commander: Forward request
     note over Commander: 2. Application resolves actor ID and type
-    Commander->>+DaprSidecar: invoke createResource(actorID, actorType)
-    DaprSidecar->>+ResourceActor: createResource()
+    Commander->>+CommanderDaprd: invoke createResource(actorID, actorType)
+    CommanderDaprd->>+ActorDaprd: service invocation
+    ActorDaprd->>+ResourceActor: createResource()
     note over ResourceActor: 3. Load current state
     ResourceActor->>ResourceActor: Load state
     alt Resource already created
-        ResourceActor-->>Commander: 409 Conflict
+        ResourceActor-->>ActorDaprd: 409 Conflict
     else
         ResourceActor->>ResourceActor: Merge defaults + request
         ResourceActor->>ResourceActor: Validate schema
         alt Invalid schema
-            ResourceActor-->>Commander: 422 Unprocessable Entity
+            ResourceActor-->>ActorDaprd: 422 Unprocessable Entity
         else
             ResourceActor->>+Cerbos: Authorization request
             alt Forbidden
                 Cerbos-->>ResourceActor: Denied
-                ResourceActor-->>Commander: 403 Forbidden
+                ResourceActor-->>ActorDaprd: 403 Forbidden
             else
                 Cerbos-->>ResourceActor: Allowed
                 ResourceActor->>ResourceActor: Save state
-                ResourceActor-->>Commander: 201 Created
+                ResourceActor-->>ActorDaprd: 201 Created
             end
         end
     end
     deactivate ResourceActor
-    DaprSidecar-->>Commander: Propagate result
-    deactivate DaprSidecar
+    ActorDaprd-->>CommanderDaprd: Propagate result
+    deactivate ActorDaprd
+    CommanderDaprd-->>Commander: Propagate result
+    deactivate CommanderDaprd
     Commander-->>EnvoyProxy: Response
     deactivate Commander
     EnvoyProxy-->>Client: HTTP result

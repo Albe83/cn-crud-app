@@ -13,7 +13,7 @@ This document defines the main guidelines for contributing to this repository.
 
   ```bash
   docker run --rm -v $(pwd)/docs:/docs plantuml/plantuml -check docs/puml/*.puml
-  docker run --rm -v $(pwd)/docs:/docs ghcr.io/mermaid-js/mermaid-cli mmdc -i docs/commander_create_sequence.mmd -o /tmp/diagram.svg
+  docker run --rm -v $(pwd)/docs:/docs ghcr.io/mermaid-js/mermaid-cli mmdc -i docs/commander_sequence.mmd -o /tmp/diagram.svg
   ```
 
 ## Contributions

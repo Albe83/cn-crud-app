@@ -31,7 +31,8 @@ sequenceDiagram
             ResourceActor-->>ActorDaprd: 403 Forbidden
         else
             Cerbos-->>ResourceActor: Allowed
-            ResourceActor->>ResourceActor: Remove state
+            ResourceActor->>ResourceActor: Set metadata.deleted
+            ResourceActor->>ResourceActor: Schedule cleanup reminder
             ResourceActor-->>ActorDaprd: 204 No Content
         end
         deactivate Cerbos

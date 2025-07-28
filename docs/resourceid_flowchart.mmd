@@ -1,0 +1,7 @@
+flowchart TD
+    A[Client request] --> B[Capture timestamp]
+    B --> C[Read datacenter ID]
+    C --> D[Read worker ID]
+    D --> E[Generate random sequence]
+    E --> F[Compose Snowflake ID]
+    F --> G[Return unique ID]

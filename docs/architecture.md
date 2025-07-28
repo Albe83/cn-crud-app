@@ -12,17 +12,20 @@ The following diagrams describe the cn-crud-app using the C4 model.
 %%{init: {'theme': 'default'}}%%
 C4Context
 title Software Systems Overview
-Person(client, "Client", "Uses the public API")
+Person(client, "Client", "REST client of service")
 System_Ext(idp, "Identity Provider", "OIDC Provider")
-System(commander, "Commander System", "Entry point service")
-System(actor, "Resource Actor System", "Handles resource life-cycle")
-System(resourceId, "Resource ID System", "Generates unique IDs")
-System_Ext(cerbos, "Cerbos Policy Repository", "Authorization")
-Rel(client, commander, "HTTPs via Envoy")
-Rel(client, idp, "Authenticate")
-Rel(commander, actor, "Invoke actors")
-Rel(commander, resourceId, "Request IDs")
-Rel(actor, cerbos, "AuthZ query")
+System_Boundary(cn-crud-app, "Cloud Native CRUD Application") {
+  System(commander, "Commander")
+  System(actor, "Actor")
+  System(resourceId, "Resource ID Service")
+  System_Ext(cerbosRepo, "Cerbos Policy", "Cerbos Authorization Policy Repository")
+}
+
+Rel(client, commander, "Create/Update/Delete Operations", "REST")
+Rel(commander, actor, "Execute Operations", "DAPR")
+Rel(commander, idp, "JWS Keys", ".well-known")
+Rel(commander, resourceId, "Get IDs", "DAPR")
+Rel(actor, cerbosRepo, "Authorization Policies", "cerbos")
 ```
 
 ## Commander Requests Unique IDs

@@ -1,32 +1,43 @@
 sequenceDiagram
+    autonumber
     participant Client
-    participant EnvoyProxy as "Envoy Proxy"
-    participant Commander as "Main Application"
-    participant DaprSidecar as "Dapr Sidecar"
-    participant ResourceActor as "Resource Actor"
-    participant Cerbos as "Cerbos PDP"
+    box "Commander Pod" #DDEEFF
+        participant EnvoyProxy as "Envoy Proxy"
+        participant Commander as "Main Application"
+        participant DaprSidecar as "Dapr Sidecar"
+    end
+    box "Resource Actor Pod" #FFEEDD
+        participant ResourceActor as "Resource Actor"
+        participant Cerbos as "Cerbos PDP"
+    end
 
-    Client->>EnvoyProxy: POST /resources + JWT
+    Client->>+EnvoyProxy: POST /resources + JWT
+    note over Client,EnvoyProxy: 1. Client request authenticated by Envoy
     EnvoyProxy->>EnvoyProxy: Validate JWT
-    EnvoyProxy->>Commander: Forward request
-    Commander->>DaprSidecar: invoke createResource(actorID, actorType)
-    DaprSidecar->>ResourceActor: createResource()
-    ResourceActor->>DaprSidecar: Load state
+    EnvoyProxy->>+Commander: Forward request
+    note over Commander: 2. Application resolves actor ID and type
+    Commander->>+DaprSidecar: invoke createResource(actorID, actorType)
+    DaprSidecar->>+ResourceActor: createResource()
+    note over ResourceActor: 3. Load current state
+    ResourceActor->>ResourceActor: Load state
     alt Resource already created
-        ResourceActor-->>Commander: 409 Conflict
+        ResourceActor-->>-Commander: 409 Conflict
     else
         ResourceActor->>ResourceActor: Merge defaults + request
         ResourceActor->>ResourceActor: Validate schema
         alt Invalid schema
-            ResourceActor-->>Commander: 422 Unprocessable Entity
+            ResourceActor-->>-Commander: 422 Unprocessable Entity
         else
-            ResourceActor->>Cerbos: Authorization request
+            ResourceActor->>+Cerbos: Authorization request
             alt Forbidden
-                ResourceActor-->>Commander: 403 Forbidden
+                Cerbos-->>-ResourceActor: Denied
+                ResourceActor-->>-Commander: 403 Forbidden
             else
-                ResourceActor->>DaprSidecar: Save state
-                ResourceActor-->>Commander: 201 Created
+                Cerbos-->>-ResourceActor: Allowed
+                ResourceActor->>ResourceActor: Save state
+                ResourceActor-->>-Commander: 201 Created
             end
         end
     end
-    Commander-->>Client: Result
+    Commander-->>-EnvoyProxy: Response
+    EnvoyProxy-->>-Client: HTTP result

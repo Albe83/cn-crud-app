@@ -1,12 +1,53 @@
 sequenceDiagram
+    autonumber
     participant Client
-    participant Envoy as Envoy Proxy
-    participant App as Main Application
-    participant RM as Resource Manager
+    box "Commander Pod" #DDEEFF
+        participant EnvoyProxy as "Envoy Proxy"
+        participant Commander as "Main Application"
+        participant CommanderDaprd as "daprd (Commander)"
+    end
+    box "Resource Actor Pod" #FFEEDD
+        participant ActorDaprd as "daprd (Actor)"
+        participant ResourceActor as "Resource Actor"
+        participant Cerbos as "Cerbos PDP"
+    end
 
-    Client->>Envoy: HTTP request
-    Envoy->>Envoy: OIDC authentication
-    Envoy->>App: Forward request
-    App->>RM: Invoke resource action
-    RM-->>App: Result
-    App-->>Client: Response
+    Client->>+EnvoyProxy: POST /resources + JWT
+    note over Client,EnvoyProxy: 1. Client request authenticated by Envoy
+    EnvoyProxy->>EnvoyProxy: Validate JWT
+    EnvoyProxy->>+Commander: Forward request
+    note over Commander: 2. Application resolves actor ID and type
+    Commander->>+CommanderDaprd: invoke createResource(actorID, actorType)
+    CommanderDaprd->>+ActorDaprd: service invocation
+    ActorDaprd->>+ResourceActor: createResource()
+    note over ResourceActor: 3. Load current state
+    ResourceActor->>ResourceActor: Load state
+    alt Resource already created
+        ResourceActor-->>ActorDaprd: 409 Conflict
+    else
+        ResourceActor->>ResourceActor: Merge defaults + request
+        ResourceActor->>ResourceActor: Validate schema
+        alt Invalid schema
+            ResourceActor-->>ActorDaprd: 422 Unprocessable Entity
+        else
+            ResourceActor->>+Cerbos: Authorization request
+            alt Forbidden
+                Cerbos-->>ResourceActor: Denied
+                ResourceActor-->>ActorDaprd: 403 Forbidden
+            else
+                Cerbos-->>ResourceActor: Allowed
+                ResourceActor->>ResourceActor: Save state
+                ResourceActor-->>ActorDaprd: 201 Created
+            end
+            deactivate Cerbos
+        end
+    end
+    deactivate ResourceActor
+    ActorDaprd-->>CommanderDaprd: Propagate result
+    deactivate ActorDaprd
+    CommanderDaprd-->>Commander: Propagate result
+    deactivate CommanderDaprd
+    Commander-->>EnvoyProxy: Response
+    deactivate Commander
+    EnvoyProxy-->>Client: HTTP result
+    deactivate EnvoyProxy

@@ -1,0 +1,14 @@
+%%{init: {'theme': 'default'}}%%
+C4Context
+title Software Systems Overview
+Person(client, "Client", "Uses the public API")
+Person(idp, "Identity Provider", "OIDC provider")
+System(commander, "Commander System", "Entry point service")
+System(actor, "Resource Actor System", "Handles resource life-cycle")
+System(resourceId, "Resource ID System", "Generates unique IDs")
+System_Ext(cerbos, "Cerbos PDP", "Authorization")
+Rel(client, commander, "HTTP via Envoy")
+Rel(client, idp, "Authenticate")
+Rel(commander, actor, "Invoke actors")
+Rel(commander, resourceId, "Request IDs")
+Rel(actor, cerbos, "AuthZ query")

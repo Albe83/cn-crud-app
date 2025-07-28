@@ -1,0 +1,27 @@
+%%{init: {'theme': 'default'}}%%
+C4Container
+title cn-crud-app Container Diagram
+Person(client, "Client", "Uses the public API")
+Person(idp, "Identity Provider", "OIDC provider")
+System_Boundary(cn, "cn-crud-app") {
+  Container(envoy, "Envoy Proxy", "Gateway", "Authenticates JWTs")
+  Container(commander, "Commander", "Service", "REST entry point")
+  Container(resourceId, "ResourceID", "Service", "Generates unique IDs")
+  Container(resourceManager, "ResourceManager", "Dapr Actor", "Resource logic")
+  Container(resourceProjector, "ResourceProjector", "Service", "Materializes views")
+  ContainerDb(stateStore, "State Store", "Database", "Actor state")
+  ContainerDb(viewStore, "View Store", "Database", "Query data")
+  Container(queue, "Event Broker", "Pub/Sub", "Domain events")
+  Container_Ext(cerbos, "Cerbos PDP", "Authorization", "Policy decisions")
+}
+Rel(client, envoy, "HTTP")
+Rel(envoy, idp, "Validate token")
+Rel(envoy, commander, "Forwards requests")
+Rel(commander, resourceId, "Request ID")
+Rel(commander, resourceManager, "Invoke via Dapr")
+Rel(resourceManager, stateStore, "Persist state")
+Rel(resourceManager, queue, "Publish events")
+Rel(resourceManager, cerbos, "AuthZ query")
+Rel(resourceProjector, queue, "Consume events")
+Rel(resourceProjector, viewStore, "Update views")
+Rel(client, resourceProjector, "Query views")

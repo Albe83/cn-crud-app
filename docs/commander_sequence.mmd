@@ -39,6 +39,7 @@ sequenceDiagram
                 ResourceActor->>ResourceActor: Save state
                 ResourceActor-->>ActorDaprd: 201 Created
             end
+            deactivate Cerbos
         end
     end
     deactivate ResourceActor

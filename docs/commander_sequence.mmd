@@ -1,12 +1,32 @@
 sequenceDiagram
     participant Client
-    participant Envoy as Envoy Proxy
-    participant App as Main Application
-    participant RM as Resource Manager
+    participant EnvoyProxy as "Envoy Proxy"
+    participant Commander as "Main Application"
+    participant DaprSidecar as "Dapr Sidecar"
+    participant ResourceActor as "Resource Actor"
+    participant Cerbos as "Cerbos PDP"
 
-    Client->>Envoy: HTTP request
-    Envoy->>Envoy: OIDC authentication
-    Envoy->>App: Forward request
-    App->>RM: Invoke resource action
-    RM-->>App: Result
-    App-->>Client: Response
+    Client->>EnvoyProxy: POST /resources + JWT
+    EnvoyProxy->>EnvoyProxy: Validate JWT
+    EnvoyProxy->>Commander: Forward request
+    Commander->>DaprSidecar: invoke createResource(actorID, actorType)
+    DaprSidecar->>ResourceActor: createResource()
+    ResourceActor->>DaprSidecar: Load state
+    alt Resource already created
+        ResourceActor-->>Commander: 409 Conflict
+    else
+        ResourceActor->>ResourceActor: Merge defaults + request
+        ResourceActor->>ResourceActor: Validate schema
+        alt Invalid schema
+            ResourceActor-->>Commander: 422 Unprocessable Entity
+        else
+            ResourceActor->>Cerbos: Authorization request
+            alt Forbidden
+                ResourceActor-->>Commander: 403 Forbidden
+            else
+                ResourceActor->>DaprSidecar: Save state
+                ResourceActor-->>Commander: 201 Created
+            end
+        end
+    end
+    Commander-->>Client: Result

@@ -1,0 +1,9 @@
+flowchart TD
+    A[Request ID] --> B[Get current timestamp]
+    B --> C[Read datacenter & worker IDs]
+    C --> D{Same millisecond?}
+    D -- Yes --> E[Increment sequence]
+    D -- No --> F[Reset sequence]
+    E --> G[Compose Snowflake ID]
+    F --> G
+    G --> H[Return unique ID]

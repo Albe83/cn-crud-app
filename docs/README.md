@@ -14,3 +14,4 @@ Additional architecture diagrams are provided in the `dsl` and `puml` folders.
 ## Workflows
 - [Resource Creation](resource_creation.md)
 - [Resource Update](resource_update.md)
+- [Resource ID Generation](resource_id.md)

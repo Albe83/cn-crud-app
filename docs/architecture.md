@@ -13,12 +13,12 @@ The following diagrams describe the cn-crud-app using the C4 model.
 C4Context
 title Software Systems Overview
 Person(client, "Client", "Uses the public API")
-Person(idp, "Identity Provider", "OIDC provider")
+System_Ext(idp, "Identity Provider", "OIDC Provider")
 System(commander, "Commander System", "Entry point service")
 System(actor, "Resource Actor System", "Handles resource life-cycle")
 System(resourceId, "Resource ID System", "Generates unique IDs")
-System_Ext(cerbos, "Cerbos PDP", "Authorization")
-Rel(client, commander, "HTTP via Envoy")
+System_Ext(cerbos, "Cerbos Policy Repository", "Authorization")
+Rel(client, commander, "HTTPs via Envoy")
 Rel(client, idp, "Authenticate")
 Rel(commander, actor, "Invoke actors")
 Rel(commander, resourceId, "Request IDs")

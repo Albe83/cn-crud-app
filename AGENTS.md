@@ -6,15 +6,24 @@ This document defines the main guidelines for contributing to this repository.
 - Analyze the project structure before modifying files.
 - Check the README and any other documentation for specific instructions.
 - Store all project documentation inside the `docs` directory.
-- Document architecture using diagram-as-code approaches (DSL, PlantUML, Mermaid, Markdown) so that diagrams can render in GitHub.
+- Document architecture using diagram-as-code approaches so that diagrams render in GitHub.
 - Keep all architectural artifacts consistent whenever they are created or updated.
 - Ensure that documentation artifacts (e.g., PlantUML and Mermaid files) are syntactically valid.
   You can lint them with the following commands:
-
+  
   ```bash
   docker run --rm -v $(pwd)/docs:/docs plantuml/plantuml -check docs/puml/*.puml
   docker run --rm -v $(pwd)/docs:/docs ghcr.io/mermaid-js/mermaid-cli mmdc -i docs/commander_sequence.mmd -o /tmp/diagram.svg
   ```
+
+## Architecture and Diagram Guidelines
+- Use Mermaid charts for all architectural artifacts stored in `docs`.
+- Represent architecture using the C4 model.
+- Describe workflows with sequence diagrams.
+- Show internal operations with flowcharts or pseudocode.
+
+## Modifying This File
+- Modify `AGENTS.md` only when an explicit request is provided.
 
 ## Contributions
 - Write commit messages in English, clearly and concisely.

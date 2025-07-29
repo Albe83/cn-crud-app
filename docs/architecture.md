@@ -12,11 +12,13 @@ The following diagrams describe the cn-crud-app using the C4 model.
 %%{init: {'theme': 'default'}}%%
 C4Context
 title Software Systems Overview
+UpdateLayoutConfig("3", "1")
+
 Person(client, "Client", "REST client of service")
 System_Ext(idp, "Identity Provider", "OIDC Provider")
 System_Boundary(cn-crud-app, "Cloud Native CRUD Application") {
-  System(commander, "Commander")
   System(actor, "Actor")
+  System(commander, "Commander")
   System(resourceId, "Resource ID Service")
   System_Ext(cerbosRepo, "Cerbos Policy", "Cerbos Authorization Policy Repository")
 }
@@ -42,6 +44,7 @@ System_Boundary(commanderSys, "Commander System") {
   Container(commander, "Commander", "main")
   Container_Ext(daprd, "Daprd", "sidecar")
 }
+
 System(resourceId, "Resource ID Service")
 System(actor, "Actor")
 
@@ -59,14 +62,21 @@ Rel(daprd, actor, "Forware request", "DAPRD-to-DAPRD")
 %%{init: {'theme': 'default'}}%%
 C4Container
 title Resource Actor System
+UpdateLayoutConfig("3", "1")
+
 System(commander, "Commander System")
-System_Ext(cerbosRepo, "Cerbos Policy", "Cerbos Authorization Policy Repository")
+
 System_Boundary(actorSys, "Actor System") {
-  Container_Ext(daprd, "Daprd", "sidecar")
   ContainerDb_Ext(stateStore, "DAPR State Store", "State Store Component")
-  ContainerQueue_Ext(pubSub, "DAPR Pub/Sub", "Pub/Sub Component")
+  Container_Ext(daprd, "Daprd", "sidecar")
   Container(actor, "DAPR Actor", "main")
+
+  ContainerQueue_Ext(pubSub, "DAPR Pub/Sub", "Pub/Sub Component")
   Container_Ext(cerbosPDP, "Cerbos Point Decision Policy", "sidecar")
+}
+
+System_Boundary(cerbosSys, "Cerbos Policies System") {
+  System_Ext(cerbosRepo, "Cerbos Policy", "Cerbos Authorization Policy Repository")
 }
 
 

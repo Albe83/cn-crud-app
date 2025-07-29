@@ -96,13 +96,14 @@ C4Container
 title Resource Actor System
 UpdateLayoutConfig("3", "2")
 
+System(projector, "Projector Subsystem")
 System(commander, "Commander System")
 
 System_Boundary(actorSys, "Actor System") {
-  ContainerDb_Ext(stateStore, "DAPR State Store", "State Store Component")
-  Container_Ext(daprd, "Daprd", "sidecar")
-
   ContainerQueue_Ext(pubSub, "DAPR Pub/Sub", "Pub/Sub Component")
+  Container_Ext(daprd, "Daprd", "sidecar")
+  ContainerDb_Ext(stateStore, "DAPR State Store", "State Store Component")
+
   Container(actor, "DAPR Actor", "main")
   Container_Ext(cerbosPDP, "Cerbos Point Decision Policy", "sidecar")
 }
@@ -113,11 +114,12 @@ System_Boundary(cerbosSys, "Cerbos Policies System") {
 
 
 Rel(commander, daprd, "Invoke DAPR Actor methods", "DAPR")
-Rel(daprd, actor, "Invoke Actor methods", "DAPR")
+Rel(daprd, actor, "Invoke Actor methods", "DAPR Actor API")
 Rel(daprd, stateStore, "Get/Set Actor States", "DAPR")
 Rel(daprd, pubSub, "Publish change messages", "DAPR")
 Rel(actor, cerbosPDP, "Check authorization", "Cerbos")
 Rel(cerbosPDP, cerbosRepo, "Get Policies", "Cerbos")
+Rel(pubSub, projector, "Change Events", "Cloud Events")
 ```
 
 ## Resource Projector System

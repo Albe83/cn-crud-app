@@ -1,0 +1,16 @@
+%%{init: {'theme': 'default'}}%%
+C4Container
+title Resource Projector System
+Person(client, "Client", "Reads projections")
+System_Ext(actorSys, "Actor System", "Publishes events")
+
+System_Boundary(projectorSys, "Projector System") {
+  ContainerQueue_Ext(pubSub, "DAPR Pub/Sub", "Pub/Sub Component")
+  ContainerDb_Ext(viewStore, "View Store", "Database")
+  Container(projector, "ResourceProjector", "main")
+}
+
+Rel(actorSys, pubSub, "Domain events", "DAPR")
+Rel(pubSub, projector, "Consume events", "DAPR")
+Rel(projector, viewStore, "Update views", "DAPR")
+Rel(client, projector, "Query views", "REST")

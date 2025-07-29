@@ -62,16 +62,16 @@ Rel(daprd, actor, "Forware request", "DAPRD-to-DAPRD")
 %%{init: {'theme': 'default'}}%%
 C4Container
 title Resource Actor System
-UpdateLayoutConfig("3", "1")
+UpdateLayoutConfig("3", "2")
 
 System(commander, "Commander System")
 
 System_Boundary(actorSys, "Actor System") {
   ContainerDb_Ext(stateStore, "DAPR State Store", "State Store Component")
   Container_Ext(daprd, "Daprd", "sidecar")
-  Container(actor, "DAPR Actor", "main")
 
   ContainerQueue_Ext(pubSub, "DAPR Pub/Sub", "Pub/Sub Component")
+  Container(actor, "DAPR Actor", "main")
   Container_Ext(cerbosPDP, "Cerbos Point Decision Policy", "sidecar")
 }
 

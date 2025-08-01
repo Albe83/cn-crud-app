@@ -17,7 +17,7 @@ A graphical representation of the sequence is available in [commander_create_seq
 7. **Schema validation** – The temporary resource is validated against the configured schema. If validation fails the actor returns `422 Unprocessable Entity`.
 8. **Authorization** – The actor queries the Cerbos PDP sidecar, passing the temporary resource and the user's JWT. A `403 Forbidden` response is returned if the action is denied.
 9. **State persistence** – When authorization succeeds the actor stores the resource in its state, updates the `metadata` fields (including the ETag and creation timestamp) and persists the state.
-10. **Domain event** – After saving the state the actor emits a domain event notifying other services of the new resource creation.
+10. **Domain event** – After saving the state the actor emits a domain event via Dapr's pub/sub API to notify other services of the new resource creation.
 11. **Response** – The actor responds with `201 Created` and the generated resource ID. Commander relays this response back to the client.
 
 For the deletion process see [resource_deletion.md](resource_deletion.md).

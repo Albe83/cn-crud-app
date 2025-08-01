@@ -11,6 +11,7 @@ sequenceDiagram
         participant ResourceActor as Resource Actor
         participant Cerbos as Cerbos PDP
     end
+    participant EventBroker as Event Broker
 
     Client->>+EnvoyProxy: DELETE /resources/{id} + JWT
     note over Client,EnvoyProxy: 1. Client request authenticated by Envoy
@@ -36,6 +37,9 @@ sequenceDiagram
             ActorDaprd-->>ResourceActor: State saved
             ResourceActor->>+ActorDaprd: Register cleanup reminder
             ActorDaprd-->>ResourceActor: Reminder scheduled
+            ResourceActor->>+ActorDaprd: Publish deleted event via pub/sub
+            ActorDaprd->>EventBroker: CloudEvent
+            ActorDaprd-->>ResourceActor: Event published
             ResourceActor-->>ActorDaprd: 204 No Content
         end
         deactivate Cerbos

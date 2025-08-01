@@ -17,5 +17,5 @@ A graphical representation of the sequence is available in [commander_update_seq
 7. **Schema validation** – The updated resource is validated against the configured schema. If validation fails the actor returns `422 Unprocessable Entity`.
 8. **Authorization** – The actor queries the Cerbos PDP sidecar to check whether the user is allowed to perform the update. A `403 Forbidden` response is returned when the action is denied.
 9. **State persistence** – When authorization succeeds the actor stores the updated resource, updates the `metadata` fields (including the ETag) and persists the state.
-10. **Domain event** – After saving the state the actor emits an event describing the modification.
+10. **Domain event** – After saving the state the actor emits an event describing the modification using Dapr's pub/sub API.
 11. **Response** – The actor responds with `200 OK` and the updated resource data. Commander relays this response back to the client.

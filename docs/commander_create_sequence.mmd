@@ -11,6 +11,7 @@ sequenceDiagram
         participant ResourceActor as Resource Actor
         participant Cerbos as Cerbos PDP
     end
+    participant EventBroker as Event Broker
 
     Client->>+EnvoyProxy: POST /resources + JWT
     note over Client,EnvoyProxy: 1. Client request authenticated by Envoy
@@ -37,6 +38,9 @@ sequenceDiagram
             else
                 Cerbos-->>ResourceActor: Allowed
                 ResourceActor->>ResourceActor: Save state
+                ResourceActor->>+ActorDaprd: Publish created event via pub/sub
+                ActorDaprd->>EventBroker: CloudEvent
+                ActorDaprd-->>ResourceActor: Event published
                 ResourceActor-->>ActorDaprd: 201 Created
             end
             deactivate Cerbos
